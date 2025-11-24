@@ -34,6 +34,13 @@ public class SylvanianContext : DbContext
             .HasOne(pv => pv.Product)
             .WithMany(p => p.Variants)
             .HasForeignKey(pv => pv.ProductId);
+
+        modelBuilder.Entity<Product>()
+            .Property(p => p.ItemCode)
+            .HasConversion(
+                v => !v.Any() ? null : string.Join(';', v),
+                v => string.IsNullOrEmpty(v) ? new List<string>() : v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
+            );
         
         modelBuilder.Entity<Accessory>()
             .Property(a => a.Tags)
